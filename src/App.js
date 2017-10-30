@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Textbox from './Textbox';
-import Result from './Result';
 import './App.css';
 
 class App extends Component {
@@ -11,7 +10,6 @@ class App extends Component {
           <img src="temando.gif" className="App-logo" alt="logo" />
         </header>
         <Textbox />
-        <Result />
       </div>
     );
   }

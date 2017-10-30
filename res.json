@@ -1,0 +1,125 @@
+{
+   "id": "BOOK_48H2_GB_GB_GY1-1_SP",
+   "integrationId": "uk-mail-v1",
+   "createdAt": "2017-10-24T11:23:10.042Z",
+   "configuration": {
+     "client": {
+       "username": "F000010",
+       "password": "password",
+       "endpoint": "http://www.example.com/",
+       "accountNumber": "F000010",
+       "prefixConsignment": "1389220"
+     }
+   },
+   "booking": {
+      "shipment": {
+        "integrationServiceId": "48H2",
+        "pickupAt": "2017-10-24T11:23:10.042Z",
+        "customerReference": "12345678",
+        "origin": {
+          "addressType": "business",
+          "addressLines": [
+            "7A King Street"
+          ],
+          "countryCode": "GB",
+          "postalCode": "AL2 1",
+          "administrativeArea": "HERTFORDSHIRE",
+          "locality": "ST. ALBANS",
+          "contact": {
+            "person": {
+              "first": "Vuong",
+              "last": "Trung",
+              "title": "Mr"
+            },
+            "organisation": {
+              "name": "Temando",
+              "department": "Temando"
+            },
+            "email": "trungvd@temando.com",
+            "phone": {
+              "number": "1597532586",
+              "type": "mobile"
+            }
+          }
+        },
+        "destination": {
+          "addressType": "business",
+          "addressLines": [
+            "985 Summer Alley",
+            "",
+            "ST. PETER PORT"
+          ],
+          "countryCode": "GB",
+          "postalCode": "GY1 1",
+          "locality": "GUERNSEY",
+          "administrativeArea": "",
+          "contact": {
+            "person": {
+              "first": "Linh",
+              "last": "Nguyen",
+              "title": "Ms"
+            },
+            "organisation": {
+              "name": "Quang Inc",
+              "department": "Temando"
+            },
+            "email": "linhnguyen@temando.com",
+            "phone": {
+              "number": "2478523691",
+              "type": "mobile",
+              "extension": "123"
+            }
+          }
+        },
+        "instructionsToDeliveryAgent": "",
+        "packages": [
+          {
+            "id": "1",
+            "grossWeight": {
+              "amount": 10,
+              "unit": "kg"
+            },
+            "description": "Desc Parce 1",
+            "dimensions": {
+              "width": 30,
+              "length": 20,
+              "height": 40,
+              "unit": "cm"
+            },
+            "items": [
+              {
+                "quantity": 1,
+                "quantityUnit": "BOX",
+                "description": "Book",
+                "grossWeight": {
+                  "amount": 10,
+                  "unit": "kg"
+                }
+              }
+            ]
+          }
+        ],
+        "exportDeclaration": {
+          "declaredValue": {
+            "amount": 270,
+            "currency": "GPD"
+          }
+        }
+      },
+      "documentation": [
+         {
+           "mimeType": "application/pdf",
+           "type": "packageLabels",
+           "encoding": "base64",
+           "size": "A6"
+         },
+         {
+           "mimeType": "application/pdf",
+           "type": "cn22",
+           "encoding": "base64",
+           "size": "A6"
+         }
+      ],
+      "pickupAt": "2017-10-24T11:23:10.042Z"
+   }
+ }

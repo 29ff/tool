@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Button, Form, TextArea, Grid, Message } from 'semantic-ui-react'
+import { Button, Form, TextArea, Grid, Message, Tab } from 'semantic-ui-react'
+import Result from './Result';
 
 class Textbox extends Component {
   constructor(props) {
@@ -9,7 +10,14 @@ class Textbox extends Component {
     this.state = {
       temandoColor: '#f2612c',
       error: '',
-      buttonDisable: true
+      buttonDisable: true,
+      data: [],
+      hide: true,
+      panes: [
+        { menuItem: 'CN22', pane: { key: 'tab1', content: 'This is massive tab' } },
+        { menuItem: 'CN23', pane: { key: 'tab2', content: 'This is massive tab' } },
+        { menuItem: 'Label', pane: { key: 'tab3', content: 'This is massive tab' } },
+      ]
     }
 
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -25,7 +33,6 @@ class Textbox extends Component {
         }
       }
       for (var ele in obj) {
-        console.log(ele);
         if (typeof obj[ele] === 'object' && obj[ele] !== null && this.haveOwnDeepProperty(obj[ele], prop)) {
           if (Array.isArray(obj[ele][prop])) {
             return obj[ele][prop];
@@ -50,6 +57,9 @@ class Textbox extends Component {
 
   handleButtonClick() {
     let textValue = '';
+    this.setState({
+      error: ''
+    })
     try {
       textValue = JSON.parse(findDOMNode(this.refs.text).value);
     } catch (error) {
@@ -57,12 +67,29 @@ class Textbox extends Component {
         error: 'Nhập không đúng định dạng'
       })
     }
-    console.log(this.haveOwnDeepProperty(textValue, 'documentation'));
+    const data = this.haveOwnDeepProperty(textValue, 'documentation');
+    if (data) {
+      this.setState({
+        data: data,
+        hide: false
+      })
+    }
+  }
+
+  buildPanes() {
+    const { data } = this.props;
+    const menuItems = [];
+    data.forEach((ele) => {
+      if (ele.type === 'packageLabels') { menuItems.push('Label') }
+      menuItems.push(ele.type.toUpperCase());
+    })
+    console.log(menuItems);
+    return menuItems;
   }
 
   render() {
     return (
-      <Grid>
+      <Grid columns={1}>
         <Grid.Row centered>
           <Grid.Column width={14}>
             <Form error>
@@ -77,6 +104,11 @@ class Textbox extends Component {
                 (this.state.error !== '') ? <Message error content={this.state.error} /> : ''
               }
             </Form>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row centered className={(this.state.hide) ? 'hide' : ''}>
+          <Grid.Column width={14}>
+            <Result data={this.state.data} panes={this.state.panes}/>
           </Grid.Column>
         </Grid.Row>
       </Grid>

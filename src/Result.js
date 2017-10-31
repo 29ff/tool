@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Divider, Select, Button, Message } from 'semantic-ui-react'
 
-
-
 class Result extends Component {
 
   constructor(props) {
@@ -23,8 +21,10 @@ class Result extends Component {
       error: ''
     })
     if (this.state.docData) {
-      const urlStr = 'data:application/pdf;base64,' + this.state.docData;
-      window.open(urlStr, '_blank');
+      const newWindow = window.open();
+      newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" title="documentation" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
+      newWindow.document.title = "Documentation";
+      newWindow.focus();
     } else {
       this.setState({
         error: 'Không có data để hiển thị'
@@ -55,6 +55,9 @@ class Result extends Component {
         <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
                 onClick={this.viewDocumentation}
                 disabled={this.state.disableButton}>View</Button>
+        <a download="documentation.pdf" href={"data:application/pdf;base64," + this.state.docData}>
+          <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
+        disabled={this.state.disableButton}>Download</Button></a>
         <div style={{ marginTop: "20px" }}></div>
         <div>
           {

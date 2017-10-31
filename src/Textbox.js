@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Button, Form, TextArea, Grid, Message, Tab } from 'semantic-ui-react'
+import { Button, Form, TextArea, Grid, Message } from 'semantic-ui-react'
 import Result from './Result';
 
 class Textbox extends Component {
@@ -10,14 +10,10 @@ class Textbox extends Component {
     this.state = {
       temandoColor: '#f2612c',
       error: '',
-      buttonDisable: true,
-      data: [],
-      hide: true,
-      panes: [
-        { menuItem: 'CN22', pane: { key: 'tab1', content: 'This is massive tab' } },
-        { menuItem: 'CN23', pane: { key: 'tab2', content: 'This is massive tab' } },
-        { menuItem: 'Label', pane: { key: 'tab3', content: 'This is massive tab' } },
-      ]
+      disableButton: true,
+      docs: [],
+      dataBase64: [],
+      hide: true
     }
 
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -46,18 +42,49 @@ class Textbox extends Component {
   handleTextChange() {
     if (findDOMNode(this.refs.text).value) {
       this.setState({
-        buttonDisable: false
+        disableButton: false
       })
     } else {
       this.setState({
-        buttonDisable: true
+        disableButton: true
       })
     }
+  }
+
+  getDocs(documentation) {
+    const docs = [];
+    const dataBase64 = [];
+    for (let i = 0, len = documentation.length; i < len; i++) {
+      if (!documentation[i].hasOwnProperty('type') || !documentation[i].hasOwnProperty('data')) {
+        this.setState({
+          error: 'Trường "documentation" phải có "type" và "data"'
+        })
+        return false;
+      } else if (documentation[i].type === '' || documentation[i].data === '') {
+        this.setState({
+          error: '"type" và "data" không được rỗng'
+        })
+        return false;
+      } else {
+        const type = documentation[i].type;
+        let doc = {};
+        dataBase64.push({ type: documentation[i].type, data: documentation[i].data });
+        if (type === 'packageLabels') {
+          doc = { key: 'packageLabels', value: 'packageLabels', text: 'Label' };
+          docs.push(doc);
+        } else {
+          doc = { key: documentation[i].type, value: documentation[i].type, text: documentation[i].type.toUpperCase() };
+          docs.push(doc);
+        }
+      }
+    }
+    return [docs, dataBase64];
   }
 
   handleButtonClick() {
     let textValue = '';
     this.setState({
+      hide: true,
       error: ''
     })
     try {
@@ -66,25 +93,25 @@ class Textbox extends Component {
       this.setState({
         error: 'Nhập không đúng định dạng'
       })
+      return;
     }
-    const data = this.haveOwnDeepProperty(textValue, 'documentation');
-    if (data) {
+    const documentation = this.haveOwnDeepProperty(textValue, 'documentation');
+    if (documentation && documentation.length > 0) {
+      const data = this.getDocs(documentation);
+      if (data) {
+        this.setState({
+          hide: false,
+          docs: data[0],
+          dataBase64: data[1]
+        })
+      } else {
+        return;
+      }
+    } else {
       this.setState({
-        data: data,
-        hide: false
+        error: 'Không thể định dạng hoặc "documentation" không có phần tử hợp lệ'
       })
     }
-  }
-
-  buildPanes() {
-    const { data } = this.props;
-    const menuItems = [];
-    data.forEach((ele) => {
-      if (ele.type === 'packageLabels') { menuItems.push('Label') }
-      menuItems.push(ele.type.toUpperCase());
-    })
-    console.log(menuItems);
-    return menuItems;
   }
 
   render() {
@@ -99,7 +126,7 @@ class Textbox extends Component {
                         autoFocus
                         ref="text"
               />
-              <Button ref="button" fluid disabled={this.state.buttonDisable} style={{ backgroundColor: this.state.temandoColor, color: "#fff" }} onClick={this.handleButtonClick}>Submit</Button>
+              <Button ref="button" fluid disabled={this.state.disableButton} style={{ backgroundColor: this.state.temandoColor, color: "#fff" }} onClick={this.handleButtonClick}>Submit</Button>
               {
                 (this.state.error !== '') ? <Message error content={this.state.error} /> : ''
               }
@@ -108,7 +135,7 @@ class Textbox extends Component {
         </Grid.Row>
         <Grid.Row centered className={(this.state.hide) ? 'hide' : ''}>
           <Grid.Column width={14}>
-            <Result data={this.state.data} panes={this.state.panes}/>
+            <Result docs={this.state.docs} temandoColor={this.state.temandoColor} dataBase64={this.state.dataBase64} />
           </Grid.Column>
         </Grid.Row>
       </Grid>

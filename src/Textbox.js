@@ -93,7 +93,8 @@ class Textbox extends Component {
       textValue = JSON.parse(findDOMNode(this.refs.text).value);
     } catch (error) {
       this.setState({
-        error: 'Nhập không đúng định dạng'
+        error: 'Nhập không đúng định dạng',
+        loading: false
       })
       return;
     }
@@ -138,11 +139,15 @@ class Textbox extends Component {
             </Form>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row centered className={(this.state.hide) ? 'hide' : ''}>
-          <Grid.Column width={14}>
-            <Result docs={this.state.docs} temandoColor={this.state.temandoColor} dataBase64={this.state.dataBase64} />
-          </Grid.Column>
-        </Grid.Row>
+        {
+          (!this.state.hide) ?
+          <Grid.Row centered>
+            <Grid.Column width={14}>
+              <Result docs={this.state.docs} temandoColor={this.state.temandoColor} dataBase64={this.state.dataBase64} />
+            </Grid.Column>
+          </Grid.Row>
+          : null
+        }
       </Grid>
     )
   }

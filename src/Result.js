@@ -23,7 +23,7 @@ class Result extends Component {
     })
     if (this.state.docData) {
       const newWindow = window.open();
-      newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" title="documentation" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
+      newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
       newWindow.document.title = this.state.selectedItem;
       newWindow.focus();
     } else {

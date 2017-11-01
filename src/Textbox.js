@@ -13,7 +13,8 @@ class Textbox extends Component {
       disableButton: true,
       docs: [],
       dataBase64: [],
-      hide: true
+      hide: true,
+      loading: false
     }
 
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -85,7 +86,8 @@ class Textbox extends Component {
     let textValue = '';
     this.setState({
       hide: true,
-      error: ''
+      error: '',
+      loading: true
     })
     try {
       textValue = JSON.parse(findDOMNode(this.refs.text).value);
@@ -99,11 +101,14 @@ class Textbox extends Component {
     if (documentation && documentation.length > 0) {
       const data = this.getDocs(documentation);
       if (data) {
-        this.setState({
-          hide: false,
-          docs: data[0],
-          dataBase64: data[1]
-        })
+        setTimeout(() => {
+          this.setState({
+            hide: false,
+            docs: data[0],
+            dataBase64: data[1],
+            loading: false
+          })
+        }, 300)
       } else {
         return;
       }
@@ -126,7 +131,7 @@ class Textbox extends Component {
                         autoFocus
                         ref="text"
               />
-              <Button ref="button" fluid disabled={this.state.disableButton} style={{ backgroundColor: this.state.temandoColor, color: "#fff" }} onClick={this.handleButtonClick}>Submit</Button>
+              <Button ref="button" fluid disabled={this.state.disableButton} loading={this.state.loading} style={{ backgroundColor: this.state.temandoColor, color: "#fff" }} onClick={this.handleButtonClick}>Submit</Button>
               {
                 (this.state.error !== '') ? <Message error content={this.state.error} /> : ''
               }

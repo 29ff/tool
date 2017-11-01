@@ -9,7 +9,8 @@ class Result extends Component {
     this.state = {
       disableButton: true,
       docData: '',
-      error: ''
+      error: '',
+      selectedItem: ''
     }
 
     this.viewDocumentation = this.viewDocumentation.bind(this);
@@ -23,7 +24,7 @@ class Result extends Component {
     if (this.state.docData) {
       const newWindow = window.open();
       newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" title="documentation" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
-      newWindow.document.title = "Documentation";
+      newWindow.document.title = this.state.selectedItem;
       newWindow.focus();
     } else {
       this.setState({
@@ -42,7 +43,8 @@ class Result extends Component {
     }
     this.setState({
       disableButton: false,
-      docData: data
+      docData: data,
+      selectedItem: (e.value === 'packageLabels') ? 'Label' : e.value.toUpperCase()
     })
   }
 
@@ -55,7 +57,7 @@ class Result extends Component {
         <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
                 onClick={this.viewDocumentation}
                 disabled={this.state.disableButton}>View</Button>
-        <a download="documentation.pdf" href={"data:application/pdf;base64," + this.state.docData}>
+        <a download={this.state.selectedItem + ".pdf"} href={"data:application/pdf;base64," + this.state.docData}>
           <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
         disabled={this.state.disableButton}>Download</Button></a>
         <div style={{ marginTop: "20px" }}></div>

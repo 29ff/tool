@@ -57,7 +57,7 @@ class Result extends Component {
         <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
                 onClick={this.viewDocumentation}
                 disabled={this.state.disableButton}>View</Button>
-        <a download={this.state.selectedItem + ".pdf"} href={"data:application/pdf;base64," + encodeURI(this.state.docData)}>
+        <a download={(this.state.selectedItem) ? this.state.selectedItem + ".pdf" : null} href={(this.state.selectedItem) ? "data:application/pdf;base64," + encodeURI(this.state.docData) : null}>
           <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
         disabled={this.state.disableButton}>Download</Button></a>
         <div style={{ marginTop: "20px" }}></div>

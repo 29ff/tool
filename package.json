@@ -5,6 +5,9 @@
   "homepage": "https://29ff.github.io/tool",
   "dependencies": {
     "global": "^4.3.2",
+    "lodash": "^4.17.4",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.includes": "^4.3.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.14",

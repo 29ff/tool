@@ -44,7 +44,7 @@ class Result extends Component {
     this.setState({
       disableButton: false,
       docData: data,
-      selectedItem: (e.value === 'packageLabels') ? 'Label' : e.value.toUpperCase()
+      selectedItem: e.value
     })
   }
 

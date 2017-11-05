@@ -11,8 +11,11 @@ class Textbox extends Component {
       temandoColor: '#f2612c',
       error: '',
       disableButton: true,
+      docId: [],
       docs: [],
+      documentation: [],
       dataBase64: [],
+      doc: [],
       hide: true,
       loading: false
     }
@@ -23,21 +26,29 @@ class Textbox extends Component {
   }
 
   haveOwnDeepProperty(obj, prop) {
-    if (typeof obj === 'object' && obj !== null) {
-      if (obj.hasOwnProperty(prop)) {
-        if (Array.isArray(obj[prop])) {
-          return obj[prop];
-        }
+    if (obj.hasOwnProperty(prop)) {
+      for (let i in obj[prop]) {
+        this.state.documentation.push(obj[prop][i]);
       }
-      for (var ele in obj) {
-        if (typeof obj[ele] === 'object' && obj[ele] !== null && this.haveOwnDeepProperty(obj[ele], prop)) {
-          if (Array.isArray(obj[ele][prop])) {
-            return obj[ele][prop];
+    } else {
+      for (let x in obj) {
+        if (typeof obj[x] === 'object') {
+          if (Array.isArray(obj[x])) {
+            for (let y in obj[x]) {
+              this.haveOwnDeepProperty(obj[x][y], prop);
+            }
+          } else {
+            if (obj[x].hasOwnProperty(prop) && Array.isArray(obj[x][prop]) && obj[x][prop] !== null) {
+              for (let i in obj[x][prop]) {
+                this.state.documentation.push(obj[x][prop][i]);
+              }
+            } else {
+              this.haveOwnDeepProperty(obj[x], prop);
+            }
           }
         }
       }
     }
-    return false;
   }
 
   handleTextChange() {
@@ -52,30 +63,57 @@ class Textbox extends Component {
     }
   }
 
+  isExists(docs, value) {
+    let count = 0;
+    for (let i in docs) {
+      if (docs[i].value.includes(value)) {
+        count += 1;
+      }
+    }
+    return (count > 0) ? count : false;
+  }
+
   getDocs(documentation) {
     const docs = [];
     const dataBase64 = [];
     for (let i = 0, len = documentation.length; i < len; i++) {
+      const type = documentation[i].type;
+      const data = documentation[i].data;
       if (!documentation[i].hasOwnProperty('type') || !documentation[i].hasOwnProperty('data')) {
         this.setState({
           error: 'Trường "documentation" phải có "type" và "data"'
         })
         return false;
-      } else if (documentation[i].type === '' || documentation[i].data === '') {
+      } else if (type === '' || data === '') {
         this.setState({
           error: '"type" và "data" không được rỗng'
         })
         return false;
       } else {
-        const type = documentation[i].type;
+        
         let doc = {};
-        dataBase64.push({ type: documentation[i].type, data: documentation[i].data });
         if (type === 'packageLabels') {
-          doc = { key: 'packageLabels', value: 'packageLabels', text: 'Label' };
-          docs.push(doc);
+          const count = this.isExists(docs, 'packageLabels');
+          if (docs.length > 0 && count) {
+            doc = { key: `packageLabels ${count}`, value: `packageLabels ${count}`, text: `Label ${count}` };
+            dataBase64.push({ type: `${type} ${count}`, data: data });
+            docs.push(doc);
+          } else {
+            doc = { key: 'packageLabels', value: 'packageLabels', text: 'Label' };
+            dataBase64.push({ type: type, data: data });
+            docs.push(doc);
+          }
         } else {
-          doc = { key: documentation[i].type, value: documentation[i].type, text: documentation[i].type.toUpperCase() };
-          docs.push(doc);
+          const count = this.isExists(docs, type);
+          if (docs.length > 0 && count) {
+            doc = { key: `${type} ${count}`, value: `${type} ${count}`, text: `${type.toUpperCase()} ${count}` };
+            dataBase64.push({ type: `${type} ${count}`, data: data });
+            docs.push(doc);
+          } else {
+            doc = { key: type, value: type, text: type.toUpperCase() };
+            dataBase64.push({ type: type, data: data });
+            docs.push(doc);
+          }
         }
       }
     }
@@ -92,15 +130,20 @@ class Textbox extends Component {
     try {
       textValue = JSON.parse(findDOMNode(this.refs.text).value);
     } catch (error) {
-      this.setState({
-        error: 'Nhập không đúng định dạng',
-        loading: false
-      })
+      setTimeout(() => {
+        this.setState({
+          error: 'Nhập không đúng định dạng',
+          loading: false
+        })
+      }, 300)
       return;
     }
-    const documentation = this.haveOwnDeepProperty(textValue, 'documentation');
-    if (documentation && documentation.length > 0) {
-      const data = this.getDocs(documentation);
+    this.haveOwnDeepProperty(textValue, 'documentation');
+    if (this.state.documentation && this.state.documentation.length > 0) {
+      const data = this.getDocs(this.state.documentation);
+      this.setState({
+        documentation: []
+      })
       if (data) {
         setTimeout(() => {
           this.setState({
@@ -114,9 +157,12 @@ class Textbox extends Component {
         return;
       }
     } else {
-      this.setState({
-        error: 'Không thể định dạng hoặc "documentation" không có phần tử hợp lệ'
-      })
+      setTimeout(() => {
+        this.setState({
+          error: 'Không thể định dạng hoặc "documentation" không có phần tử hợp lệ',
+          loading: false
+        })
+      }, 300)
     }
   }
 

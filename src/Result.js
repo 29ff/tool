@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Divider, Select, Button, Message } from 'semantic-ui-react'
+import { setTimeout } from 'timers';
 
 class Result extends Component {
 
@@ -10,7 +11,8 @@ class Result extends Component {
       disableButton: true,
       docData: '',
       error: '',
-      selectedItem: ''
+      selectedItem: '',
+      loading: false
     }
 
     this.viewDocumentation = this.viewDocumentation.bind(this);
@@ -28,17 +30,24 @@ class Result extends Component {
       newWindow.focus();
     } else {
       this.setState({
-        error: 'Không có data để hiển thị'
+        loading: true
       })
+      setTimeout(() => {
+        this.setState({
+          error: 'Không có data để hiển thị',
+          loading: false
+        })
+      }, 300)
     }
   }
 
   handleSelectChange(id, e) {
-    const { dataBase64 } = this.props;
+    const { docsData } = this.props;
+    console.log(docsData);
     let data = '';
-    for (let i = 0, len = dataBase64.length; i < len; i++) {
-      if (dataBase64[i].type === e.value) {
-        data = dataBase64[i].data;
+    for (let i = 0, len = docsData.length; i < len; i++) {
+      if (docsData[i].type === e.value) {
+        data = docsData[i].data;
       }
     }
     this.setState({
@@ -56,6 +65,7 @@ class Result extends Component {
         <span style={{ marginLeft: "15px" }}></span>
         <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
                 onClick={this.viewDocumentation}
+                loading={this.state.loading}
                 disabled={this.state.disableButton}>View</Button>
         <a download={(this.state.selectedItem) ? this.state.selectedItem + ".pdf" : null} href={(this.state.selectedItem) ? "data:application/pdf;base64," + encodeURI(this.state.docData) : null}>
           <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}

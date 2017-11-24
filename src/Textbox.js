@@ -14,7 +14,7 @@ class Textbox extends Component {
       docId: [],
       docs: [],
       documentation: [],
-      dataBase64: [],
+      docsData: [],
       doc: [],
       hide: true,
       loading: false
@@ -79,20 +79,26 @@ class Textbox extends Component {
     for (let i = 0, len = documentation.length; i < len; i++) {
       const type = documentation[i].type;
       const data = documentation[i].data;
-      if (!documentation[i].hasOwnProperty('type') || !documentation[i].hasOwnProperty('data')) {
-        this.setState({
-          error: 'Trường "documentation" phải có "type" và "data"'
-        })
+      if ((!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('data')) || (!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('url'))) {
+        setTimeout(() => {
+          this.setState({
+            error: 'Trường "documentation" phải có "type" và "data" hoặc "url"',
+            loading: false
+          })
+        }, 300)
         return false;
       } else if (type === '' || data === '') {
-        this.setState({
-          error: '"type" và "data" không được rỗng'
-        })
+        setTimeout(() => {
+          this.setState({
+            error: 'Trường "type" và "data" không được trống',
+            loading: false
+          })
+        }, 300)
         return false;
       } else {
-        
+
         let doc = {};
-        if (type === 'packageLabels') {
+        if (type === 'packageLabels' || type === 'packageLabel') {
           const count = this.isExists(docs, 'packageLabels');
           if (docs.length > 0 && count) {
             doc = { key: `packageLabels ${count}`, value: `packageLabels ${count}`, text: `Label ${count}` };
@@ -167,6 +173,7 @@ class Textbox extends Component {
   }
 
   render() {
+    console.log(this.state.docs);
     return (
       <Grid columns={1}>
         <Grid.Row centered>
@@ -189,7 +196,7 @@ class Textbox extends Component {
           (!this.state.hide) ?
           <Grid.Row centered>
             <Grid.Column width={14}>
-              <Result docs={this.state.docs} temandoColor={this.state.temandoColor} dataBase64={this.state.dataBase64} />
+              <Result docs={this.state.docs} temandoColor={this.state.temandoColor} docsData={this.state.docsData} />
             </Grid.Column>
           </Grid.Row>
           : null

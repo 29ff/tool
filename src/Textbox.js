@@ -75,10 +75,13 @@ class Textbox extends Component {
 
   getDocs(documentation) {
     const docs = [];
-    const dataBase64 = [];
+    const docsData = [];
     for (let i = 0, len = documentation.length; i < len; i++) {
       const type = documentation[i].type;
-      const data = documentation[i].data;
+      const format = (documentation[i].hasOwnProperty('encoding') ? 'base64'
+                    : (documentation[i].hasOwnProperty('url')) ? 'url' : '' );
+      const data = (format === 'base64') ? documentation[i].data
+                    : (format === 'url') ? documentation[i].url : '';
       if ((!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('data')) || (!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('url'))) {
         setTimeout(() => {
           this.setState({
@@ -101,29 +104,29 @@ class Textbox extends Component {
         if (type === 'packageLabels' || type === 'packageLabel') {
           const count = this.isExists(docs, 'packageLabels');
           if (docs.length > 0 && count) {
-            doc = { key: `packageLabels ${count}`, value: `packageLabels ${count}`, text: `Label ${count}` };
-            dataBase64.push({ type: `${type} ${count}`, data: data });
+            doc = { key: `${type} ${count}`, value: `${type} ${count}`, text: `Label ${count}` };
+            docsData.push({ type: `${type} ${count}`, data, format });
             docs.push(doc);
           } else {
-            doc = { key: 'packageLabels', value: 'packageLabels', text: 'Label' };
-            dataBase64.push({ type: type, data: data });
+            doc = { key: type, value: type, text: 'Label' };
+            docsData.push({ type: type, data, format });
             docs.push(doc);
           }
         } else {
           const count = this.isExists(docs, type);
           if (docs.length > 0 && count) {
             doc = { key: `${type} ${count}`, value: `${type} ${count}`, text: `${type.toUpperCase()} ${count}` };
-            dataBase64.push({ type: `${type} ${count}`, data: data });
+            docsData.push({ type: `${type} ${count}`, data, format });
             docs.push(doc);
           } else {
             doc = { key: type, value: type, text: type.toUpperCase() };
-            dataBase64.push({ type: type, data: data });
+            docsData.push({ type: type, data, format });
             docs.push(doc);
           }
         }
       }
     }
-    return [docs, dataBase64];
+    return [docs, docsData];
   }
 
   handleButtonClick() {
@@ -151,11 +154,12 @@ class Textbox extends Component {
         documentation: []
       })
       if (data) {
+        console.log(data);
         setTimeout(() => {
           this.setState({
             hide: false,
             docs: data[0],
-            dataBase64: data[1],
+            docsData: data[1],
             loading: false
           })
         }, 300)
@@ -173,7 +177,6 @@ class Textbox extends Component {
   }
 
   render() {
-    console.log(this.state.docs);
     return (
       <Grid columns={1}>
         <Grid.Row centered>

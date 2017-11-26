@@ -12,6 +12,7 @@ class Result extends Component {
       docData: '',
       error: '',
       selectedItem: '',
+      selectedFormat: '',
       loading: false
     }
 
@@ -23,18 +24,23 @@ class Result extends Component {
     this.setState({
       error: ''
     })
-    if (this.state.docData) {
-      const newWindow = window.open();
-      newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
-      newWindow.document.title = this.state.selectedItem;
-      newWindow.focus();
+    console.log(this.state);
+    if (this.state.docData && this.state.selectedFormat) {
+      if (this.state.selectedFormat === 'base64') {
+        const newWindow = window.open();
+        newWindow.document.write('<iframe src="data:application/pdf;base64,' + encodeURI(this.state.docData) + '" style="border: 0; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%"></iframe>');
+        newWindow.document.title = this.state.selectedItem;
+        newWindow.focus();
+      } else if (this.state.selectedFormat === 'url') {
+        window.open(this.state.docData);
+      }
     } else {
       this.setState({
         loading: true
       })
       setTimeout(() => {
         this.setState({
-          error: 'Không có data để hiển thị',
+          error: 'Không có data để hiển thị hoặc format không đúng',
           loading: false
         })
       }, 300)
@@ -43,16 +49,18 @@ class Result extends Component {
 
   handleSelectChange(id, e) {
     const { docsData } = this.props;
-    console.log(docsData);
     let data = '';
+    let format = '';
     for (let i = 0, len = docsData.length; i < len; i++) {
       if (docsData[i].type === e.value) {
         data = docsData[i].data;
+        format = docsData[i].format;
       }
     }
     this.setState({
       disableButton: false,
       docData: data,
+      selectedFormat: format,
       selectedItem: e.value
     })
   }
@@ -67,9 +75,13 @@ class Result extends Component {
                 onClick={this.viewDocumentation}
                 loading={this.state.loading}
                 disabled={this.state.disableButton}>View</Button>
-        <a download={(this.state.selectedItem) ? this.state.selectedItem + ".pdf" : null} href={(this.state.selectedItem) ? "data:application/pdf;base64," + encodeURI(this.state.docData) : null}>
-          <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
-        disabled={this.state.disableButton}>Download</Button></a>
+        {
+          (this.state.selectedFormat === 'base64') ? (
+            <a download={(this.state.selectedItem) ? this.state.selectedItem + ".pdf" : null} href={(this.state.selectedItem) ? "data:application/pdf;base64," + encodeURI(this.state.docData) : null}>
+            <Button style={{ backgroundColor: this.props.temandoColor, color: "#fff" }}
+          disabled={this.state.disableButton}>Download</Button></a>
+          ) : null
+        }
         <div style={{ marginTop: "20px" }}></div>
         <div>
           {

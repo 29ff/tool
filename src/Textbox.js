@@ -78,8 +78,8 @@ class Textbox extends Component {
     const docsData = [];
     for (let i = 0, len = documentation.length; i < len; i++) {
       const type = documentation[i].type;
-      const format = (documentation[i].hasOwnProperty('encoding') ? 'base64'
-                    : (documentation[i].hasOwnProperty('url')) ? 'url' : '' );
+      const format = (documentation[i].hasOwnProperty('url') ? 'url'
+                    : 'base64');
       const data = (format === 'base64') ? documentation[i].data
                     : (format === 'url') ? documentation[i].url : '';
       if ((!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('data')) || (!documentation[i].hasOwnProperty('type') && !documentation[i].hasOwnProperty('url'))) {
@@ -115,11 +115,11 @@ class Textbox extends Component {
         } else {
           const count = this.isExists(docs, type);
           if (docs.length > 0 && count) {
-            doc = { key: `${type} ${count}`, value: `${type} ${count}`, text: `${type.toUpperCase()} ${count}` };
+            doc = { key: `${type} ${count}`, value: `${type} ${count}`, text: `${(type === 'cn22' || type === 'cn23') ? type.toUpperCase() : type} ${count}` };
             docsData.push({ type: `${type} ${count}`, data, format });
             docs.push(doc);
           } else {
-            doc = { key: type, value: type, text: type.toUpperCase() };
+            doc = { key: type, value: type, text: (type === 'cn22' || type === 'cn23') ? type.toUpperCase() : type };
             docsData.push({ type: type, data, format });
             docs.push(doc);
           }

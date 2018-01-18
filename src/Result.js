@@ -24,7 +24,6 @@ class Result extends Component {
     this.setState({
       error: ''
     })
-    console.log(this.state);
     if (this.state.docData && this.state.selectedFormat) {
       if (this.state.selectedFormat === 'base64') {
         const newWindow = window.open();

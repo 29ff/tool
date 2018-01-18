@@ -27,24 +27,19 @@ class Textbox extends Component {
 
   haveOwnDeepProperty(obj, prop) {
     if (obj.hasOwnProperty(prop)) {
-      for (let i in obj[prop]) {
-        this.state.documentation.push(obj[prop][i]);
-      }
+      this.state.documentation.push(...obj[prop]);
     } else {
-      for (let x in obj) {
-        if (typeof obj[x] === 'object') {
-          if (Array.isArray(obj[x])) {
-            for (let y in obj[x]) {
-              this.haveOwnDeepProperty(obj[x][y], prop);
-            }
+      for (let a in obj) {
+        const item = obj[a];
+        if (typeof item === 'object') {
+          if (Array.isArray(item)) {
+            item.forEach(i => this.haveOwnDeepProperty(i, prop));
           } else {
-            if (obj[x].hasOwnProperty(prop) && Array.isArray(obj[x][prop]) && obj[x][prop] !== null) {
-              for (let i in obj[x][prop]) {
-                this.state.documentation.push(obj[x][prop][i]);
-              }
-            } else {
-              this.haveOwnDeepProperty(obj[x], prop);
+            if (item.hasOwnProperty(prop) && Array.isArray(item[prop]) && item[prop] !== null) {
+              this.state.documentation.push(...item[prop]);
+              delete item[prop];
             }
+            this.haveOwnDeepProperty(item, prop);
           }
         }
       }
@@ -154,7 +149,6 @@ class Textbox extends Component {
         documentation: []
       })
       if (data) {
-        console.log(data);
         setTimeout(() => {
           this.setState({
             hide: false,
